@@ -725,7 +725,7 @@ we are signing our messages.
 
 ### Get SpamAssassin installed - reduce spam
 
-[SpamAssassin filter for Postfix](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/SpamAssassin.md)
+[SpamAssassin filter for Postfix](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/SpamAssassin.md)
 
 ## Useful for troubleshooting
 
