@@ -186,4 +186,4 @@ Feb 14 21:57:49 mail postfix/submission/pipe[12872]: 1181A3F5FC: to=<youruser@yo
 
 This completes the Postfix && SpamAssassin setup.
 <br>
-### Next up: [Sieve Filtering](https://github.com/insideTheFlux/Mail-Server-with-Extras/blob/insideTheFlux-Ubuntu_18-04/SieveFiltering.md)
+### Next up: [Sieve Filtering](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/SieveFiltering.md)
