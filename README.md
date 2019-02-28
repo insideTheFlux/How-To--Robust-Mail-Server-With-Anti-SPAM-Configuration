@@ -26,6 +26,7 @@ You're invited to follow the links in this tutorial to learn more about the soft
 While the test bed will be on Ubuntu 18.04, the same should apply to 16.04.5, versions of software will be different. 
 After playing with 18.04(which had issues), I've found 16.04_5 to be much more of a stable bed to test on.
 * At this time I recommend starting with 16.04_5
+* Last time I checked, this fork was 40 commits ahead of Mike's original master. (Feb 28, 2019)
 
 ### System
 
