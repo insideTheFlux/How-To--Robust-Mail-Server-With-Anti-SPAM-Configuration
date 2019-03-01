@@ -79,9 +79,12 @@ We create a new TXT record named **`_dmarc.yourdomain.com.`**
 ~~~~
 **`rua`** Reporting URI of aggregate reports. 
 
-### Now we will setup the hostname for the PTR record
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DMARC_record_edit.png)
 (There is a `'dot'` after the domain name)
+
+
+#### By this point there should be an entry in the PTR list
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/PTR_record_edit.png)
 
 
 ### Our configuration should look similar to this
