@@ -42,17 +42,17 @@ Hit ‘No’ if asked to create a SSL certificate. Choose `Internet Site` and pr
 We assume that our domain is already setup in the DNS control panel and we see the default DNS records.<p>
 1.) Add a hostname under `A record`(Use `@` for hostname), 2.) Will direct to IP, digitalocean starts to create a nice list for you. Pick the right one then hit `Create Record` button.<br><p>
 DigitalOcean gives end results to the `Hostname` under the text-area but the `Will Direct to` offers to autofill with a list of servers that are available. Pick the right one.
-![DNS default](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/raw/insideTheFlux-Ubuntu_18-04/edited/DNS_DO_edit.png)
+![DNS default](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DNS_DO_edit.png)
 
 
 ### Setting up the A record - `Will Direct To` autofills.
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/raw/insideTheFlux-Ubuntu_18-04/edited/A_record_edit.png)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/A_record_edit.png)
 
 (There is a `'dot'` after the domain name)
 
 
 ### Setting up the MX record
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/raw/insideTheFlux-Ubuntu_18_04/edited/MX_record_edit.png)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/MX_record_edit.png)
 
 (There is a `'dot'` after the domain name)
 **Digital ocean repeats what you're typing below the text-area**
@@ -65,7 +65,7 @@ We create a new TXT record
 "v=spf1 a mx ip4:1.2.3.4 -all"
 ~~~~
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/SPF_record_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/SPF_record_edit.png)
 
 
 The SPF record protects from email spoofing. It will simply tell other mail servers that only our server is authorized to send emails for **yourdomain.com** ([more aboutSPF](https://www.digitalocean.com/community/articles/how-to-use-an-spf-record-to-prevent-spoofing-improve-e-mail-reliability)).
@@ -80,12 +80,12 @@ We create a new TXT record named **`_dmarc.yourdomain.com.`**
 **`rua`** Reporting URI of aggregate reports. 
 
 ### Now we will setup the hostname for the PTR record
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/DMARC_record_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DMARC_record_edit.png)
 (There is a `'dot'` after the domain name)
 
 
 ### Our configuration should look similar to this
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/DNSRecords_FullSetup_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DNSRecords_FullSetup_edit.png)
 
 
 It will take a while to propagate the new configuration throughout the entire internet. While you wait, take a look at [How to Manage DNS Records](https://www.digitalocean.com/docs/networking/dns/how-to/manage-records/)
@@ -495,7 +495,7 @@ As 'text' we add (use your public key from /etc/opendkim/default.txt):
 "v=DKIM1; k=rsa; p=MIGfHL0GCSqGSIb3DQESYJFOA4GNADCBiQKBgQDS+vPyWRs7w32xomf2oZIexmS2TuQAXKPiQ3AXn4j25NOReXdgKxIqAwl3O7dQtgluWw+TH85Mrbmx5UgwaaLenj9cfe2IRvx7hvkj7+6i0XQqrWqZlMw+QAJxAGhfa/GVTYa+/7PFWfXLoqoBW5arE+wO20O2uw5Ik62HjkKZbQIDAQAB"
 ~~~~
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/DKIM_DNS_record_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DKIM_DNS_record_edit.png)
 
 
 It will take a while to propagate the new configuration throughout the entire internet.
@@ -556,9 +556,9 @@ Just add a new email account in Thunderbird and it will auto-detect the servers 
 
 The configuration should look like this:
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/server_autosetup.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/server_autosetup.png)
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/server_manual_config_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/server_manual_config_edit.png)
 
 
 ## Testing the mail server
@@ -573,10 +573,10 @@ tail -f /var/log/syslog
 
 This time it happens during sending emails, nothing gets sent. Here's an image:
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/sending_errors_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/sending_errors_edit.png)
 
 
-![](https://github.com/insideTheFlux/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration/blob/insideTheFlux-Ubuntu_18-04/edited/errors_thunderbird_edit.png?raw=true)
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/errors_thunderbird_edit.png?raw=true)
 
 
 It appears to be a permisions issue: default.private is owned by opendkim:opendkim user/group -- I think this can also be set to root:root but let's just apply:
