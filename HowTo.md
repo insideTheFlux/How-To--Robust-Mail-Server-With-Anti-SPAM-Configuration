@@ -186,6 +186,7 @@ local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 
 smtpd_sasl_type=dovecot
 smtpd_sasl_path=private/auth
+smtpd_sasl_auth_enable=no
 
 
 policy-spf_time_limit = 3600s
