@@ -207,13 +207,6 @@ smtpd_client_restrictions=
  permit_sasl_authenticated
  reject_unknown_client_hostname
 
-smtpd_sender_restrictions =
- permit_mynetworks
- permit_sasl_authenticated
- reject_non_fqdn_sender
- reject_unknown_sender_domain
- reject_rhsbl_sender dbl.spamhaus.org
-
 smtpd_relay_restrictions =
  permit_mynetworks
  permit_sasl_authenticated
