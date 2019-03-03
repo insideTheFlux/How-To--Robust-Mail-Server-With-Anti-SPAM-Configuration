@@ -273,7 +273,7 @@ Add the following inside the file:
 # Remove the first line of the Received: header. Note that we cannot fully remove the Received: header
 # because OpenDKIM requires that a header be present when signing outbound mail. The first line is
 # where the user's home IP address would be.
-/^\s*Received:[^\n]*(.*)/     REPLACE Received: from authenticated-user (mail.yourdomain.com [xxx.xxx.xxx.xxx])
+/^\s*Received:[^\n]*(.*)/     REPLACE Received: from authenticated-user (mail.yourdomain.com [YOUR IP ADDRESS])
 
 # Remove other typically private information.
 /^\s*User-Agent:/        IGNORE
@@ -287,10 +287,12 @@ Add the following inside the file:
 ~~~~
 Save the file, exit.
 
-So we go from showing this much info, red underlines: A little disguise
+#### This is how our headers looked at first.
+---
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/beforeheaders.png?raw=true)
 
-To showing less information:
+#### Now showing less info, a disguise.
+---
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/afterheaders.png?raw=true)
 
 ---
