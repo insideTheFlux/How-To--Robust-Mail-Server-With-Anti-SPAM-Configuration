@@ -82,10 +82,8 @@ We create a new TXT record named **`_dmarc.yourdomain.com.`**
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DMARC_record_edit.png?raw=true)
 (There is a `'dot'` after the domain name)
 
-
 #### By this point there should be an entry in the PTR list
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/PTR_record_edit.png?raw=true)
-
 
 ### Our configuration should look similar to this
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DNSRecords_FullSetup_edit.png?raw=true)
@@ -192,6 +190,9 @@ smtpd_sasl_auth_enable=no
 policy-spf_time_limit = 3600s
 smtpd_helo_required = yes
 
+header_checks = regexp:/etc/postfix/outgoing_mail_header_filters
+mime_header_checks = regexp:/etc/postfix/outgoing_mail_header_filters
+
 smtpd_recipient_restrictions =
  permit_mynetworks
  permit_sasl_authenticated
@@ -233,14 +234,14 @@ vim /etc/postfix/master.cf
 ~~~~
 
 This line must be active:
-**`Be mindful of the spacing after the first line`**
+**`Be mindful of the spacing on the second line`**
 ~~~~ 
 smtp inet n - y - - smtpd
   -o smtpd_sasl_auth_enable=yes
 ~~~~
 
 We uncomment the following:
-**`Be mindful of the spacing after the first line`**
+**`Be mindful of the spacing on the second line`**
 ~~~~
 submission inet n - - - - smtpd
   -o syslog_name=postfix/submission
@@ -258,6 +259,39 @@ policy-spf unix - n n - - spawn
   user=nobody argv=/usr/sbin/postfix-policyd-spf-perl
 ~~~~
 
+Save the file, exit.
+
+---
+
+Create a file **`outgoing_mail_header_filters`** in **`/etc/postfix`**
+~~~~
+vim outgoing_mail_header_filters
+~~~~
+
+Add the following inside the file:
+~~~~
+# Remove the first line of the Received: header. Note that we cannot fully remove the Received: header
+# because OpenDKIM requires that a header be present when signing outbound mail. The first line is
+# where the user's home IP address would be.
+/^\s*Received:[^\n]*(.*)/     REPLACE Received: from authenticated-user (mail.yourdomain.com [xxx.xxx.xxx.xxx])
+
+# Remove other typically private information.
+/^\s*User-Agent:/        IGNORE
+/^\s*X-Enigmail:/        IGNORE
+/^\s*X-Mailer:/          IGNORE
+/^\s*X-Originating-IP:/  IGNORE
+/^\s*X-Pgp-Agent:/       IGNORE
+
+# The Mime-Version header can leak the user agent too, e.g. in Mime-Version: 1.0 (Mac OS X Mail 8.1 \(2010.6\)).
+/^\s*(Mime-Version:\s*[0-9\.]+)\s.+/  REPLACE $1
+~~~~
+Save the file, exit.
+
+Here are a few lines for you to consider:
+"A good general principle in infosec is to not disclose more information than necessary."
+"Hiding the headers is really just about some degree of security through obscurity."
+
+---
 More information about the postfix configuration parameters can be found [here](http://www.postfix.org/postconf.5.html).
 
 ## Dovecot Configuration
