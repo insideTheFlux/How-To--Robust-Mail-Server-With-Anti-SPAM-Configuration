@@ -287,9 +287,11 @@ Add the following inside the file:
 ~~~~
 Save the file, exit.
 
-Here are a few lines for you to consider:
-"A good general principle in infosec is to not disclose more information than necessary."
-"Hiding the headers is really just about some degree of security through obscurity."
+So we go from showing this much info, red underlines: A little disguise
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/beforeheaders.png?raw=true)
+
+To showing less information:
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/afterheaders.png?raw=true)
 
 ---
 More information about the postfix configuration parameters can be found [here](http://www.postfix.org/postconf.5.html).
