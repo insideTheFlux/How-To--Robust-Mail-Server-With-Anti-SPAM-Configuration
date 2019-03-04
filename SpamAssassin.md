@@ -182,7 +182,8 @@ Feb 14 21:57:49 mail postfix/submission/pipe[12872]: 1181A3F5FC: to=<youruser@yo
 
 ### Read more about this topic:
 [https://wiki.apache.org/spamassassin/UsingPyzor](https://wiki.apache.org/spamassassin/UsingPyzor)<br>
-[https://www.binarytides.com/install-spamassassin-with-postfix-dovecot/](https://www.binarytides.com/install-spamassassin-with-postfix-dovecot/)
+[https://www.binarytides.com/install-spamassassin-with-postfix-dovecot/](https://www.binarytides.com/install-spamassassin-with-postfix-dovecot/)<br>
+[http://faisal.com/docs/salearn.html](http://faisal.com/docs/salearn.html)
 
 This completes the Postfix && SpamAssassin setup.
 <br>
