@@ -143,6 +143,7 @@ We empty the file and add our configuration
 ~~~~
 # Begin config
 smtpd_banner= $myhostname ESMTP Your server message here
+biff = no
 
 # appending .domain is the MUA's job.
 append_dot_mydomain = no
