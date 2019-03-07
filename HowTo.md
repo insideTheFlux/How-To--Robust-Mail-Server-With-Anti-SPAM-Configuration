@@ -759,9 +759,7 @@ won't drop a legitimate email. On the other hand, messages from our
 server should not be declared as spam as it has a valid SPF record and
 we are signing our messages.
 
-### Get SpamAssassin installed - reduce spam
-
-## [SpamAssassin filter for Postfix](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/SpamAssassin.md)
+### [Get SpamAssassin installed - reduce spam](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/SpamAssassin.md)
 
 ## Useful for troubleshooting
 
