@@ -25,12 +25,17 @@ You're invited to follow the links in this tutorial to learn more about the soft
 
 While the test bed will be on Ubuntu 18.04, the same should apply to 16.04.5, versions of software will be different. 
 After playing with 18.04(which had issues), I've found 16.04_5 to be much more of a stable bed to test on.
+
+* Last time I checked, this fork was 40 commits ahead of [Mike's original master](https://github.com/MikeSkril/How-To--Robust-Mail-Server-With-Anti-SPAM-Configuration). (Feb 28, 2019)
 * At this time I recommend starting with 16.04_5
 * I recommend Digital Ocean for a VPS.
-* Last time I checked, this fork was 40 commits ahead of Mike's original master. (Feb 28, 2019)
+
 
 ### System
 
 * A VPS running Ubuntu 18.04/16.04.5(setup will be similar on any Debian based distribution). 
 ([Get a VPS here](https://www.digitalocean.com/?refcode=79aec8435127))
 * Your own FQDN(Fully Qualified Domain Name) domain name.
+
+  
+## [Get started here](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/HowTo.md)
