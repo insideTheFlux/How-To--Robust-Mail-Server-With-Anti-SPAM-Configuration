@@ -82,11 +82,119 @@ We create a new TXT record named **`_dmarc.yourdomain.com.`**
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DMARC_record_edit.png?raw=true)
 (There is a `'dot'` after the domain name)
 
+## Setting up DKIM (Domain Keys Identified Mail)
+
+### Creating the directory and files
+
+~~~~
+mkdir /etc/opendkim
+~~~~
+
+~~~~
+vim /etc/opendkim/KeyTable
+~~~~
+
+We enter the following line (all in the first line):
+~~~~
+default._domainkey.mail.yourdomain.com mail.yourdomain.com:default:/etc/opendkim/default.private
+~~~~
+
+~~~~
+vim /etc/opendkim/SigningTable
+~~~~
+
+We enter the following line:
+~~~~
+*@yourdomain.com default._domainkey.mail.yourdomain.com
+~~~~
+
+### Generating the key pair
+~~~~
+opendkim-genkey -b 2048 -s default -d mail.yourdomain.com -D /etc/opendkim
+~~~~
+
+### Changing ownership of the private key file
+
+~~~~
+chown opendkim:opendkim /etc/opendkim/default.private
+~~~~
+
+### Configuration in opendkim
+
+~~~~
+vim /etc/default/opendkim
+~~~~
+
+### We add the line below to the configuration
+~~~~
+SOCKET="inet:8891@localhost"
+~~~~
+
+### Configuration in opendkim.conf
+
+~~~~
+vim /etc/opendkim.conf
+~~~~
+
+### We fill the file with our configuration
+~~~~
+Syslog yes
+SyslogSuccess Yes
+LogWhy yes
+
+UMask 002
+
+KeyTable refile:/etc/opendkim/KeyTable
+SigningTable refile:/etc/opendkim/SigningTable
+Selector default
+X-Header no
+SignatureAlgorithm rsa-sha256
+
+Canonicalization relaxed/simple
+Mode sv
+AutoRestart Yes
+AutoRestartRate 5/1h
+InternalHosts 127.0.0.1, localhost, yourdomain.com, mail.yourdomain.com
+
+OversignHeaders From
+~~~~
+
+### Setting the DKIM DNS record
+
+~~~~
+cat /etc/opendkim/default.txt
+~~~~
+
+This is our public key which will be used to verify the signature in our emails.
+
+~~~~
+default._domainkey IN TXT "v=DKIM1; k=rsa;
+p=MIGfHL0GCSqGSIb3DQESYJFOA4GNADCBiQKBgQDS+vPyWRs7w32xomf2oZIexmS2TuQAXKPiQ3AXn4j25NOReXdgKxIqAwl3O7dQtgluWw+TH85Mrbmx5UgwaaLenj9cfe2IRvx7hvkj7+6i0XQqrWqZlMw+QAJxAGhfa/GVTYa+/7PFWfXLoqoBW5arE+wO20O2uw5Ik62HjkKZbQIDAQAB" ; ----- DKIM key default for mail.yourdomain.com
+~~~~
+
+#### Now we add a new TXT record:
+
+As 'hostname' we put (there is a 'dot' at the end):
+
+~~~~
+default._domainkey.mail.yourdomain.com.
+~~~~
+
+As 'text' we add (use your public key from /etc/opendkim/default.txt):<br>
+It may also come as this in Ubuntu 18.04 **`v=DKIM1; h=sha256; k=rsa`** which is fine.
+~~~~
+"v=DKIM1; k=rsa; p=MIGfHL0GCSqGSIb3DQESYJFOA4GNADCBiQKBgQDS+vPyWRs7w32xomf2oZIexmS2TuQAXKPiQ3AXn4j25NOReXdgKxIqAwl3O7dQtgluWw+TH85Mrbmx5UgwaaLenj9cfe2IRvx7hvkj7+6i0XQqrWqZlMw+QAJxAGhfa/GVTYa+/7PFWfXLoqoBW5arE+wO20O2uw5Ik62HjkKZbQIDAQAB"
+~~~~
+
+![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DKIM_DNS_record_edit.png?raw=true)
+
+
+It will take a while to propagate the new configuration throughout the entire internet.
+
 #### By this point there should be an entry in the PTR list
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/PTR_record_edit.png?raw=true)
 
 ### Our configuration should look similar to this
-Do not worry about the DKIM/TXT/DomainKey record, we'll add it later down the page.
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DNSRecords_FullSetup_edit.png?raw=true)
 
 
@@ -126,8 +234,50 @@ Common Name (e.g. server FQDN or YOUR name) []:mail.yourdomain.com
 Email Address []:postmaster@yourdomain.com
 ~~~~
 
+### Getting a certificate from Let's Encrypt, moving away from self signed ones.
+There's nothing wrong with using a self signed certificate, other than having to have Thunderbird add exceptions for them at the beginning. Thunderbird's ability to read your server stats is exceptional, I think other mail clients would break trying to get your server details in order.<br>
+With that in mind, having a more accepted certificate would reduce the need for Exceptions and maybe allow other mail clients to function properly. The catch? You'll need to renew every ninety days, it can be done automatically too(I'll leave the magic for that up to you to find), the self signed lasts up-to one year per this page.<br>
+
+Installing Let's Encrypt Certbot:
+~~~~
+  add-apt-repository ppa:certbot/certbot
+~~~~
+~~~~
+  apt-get update
+~~~~
+~~~~
+  apt-get install certbot
+~~~~
+This option won't need a webserver running, certbot will handle it, port 80 should be open incase you're using a firewall.
+When asked, enter a valid email address that **`certbot`**  can remind you to renew before ninety day period is over.
+~~~~
+  certbot certonly --standalone --preferred-challenges http -d mail.yourdomain.com
+~~~~
+
+~~~~
+  - Congratulations! Your certificate and chain have been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
+   Your key file has been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
+   Your cert will expire on 2019-05-01. To obtain a new or tweaked
+   version of this certificate in the future, simply run certbot
+   again. To non-interactively renew *all* of your certificates, run
+   "certbot renew"
+~~~~
+
+Don't forget that your certificate is only valid for ninety days, you will need to renew it. Manually renew before expiration date.
+Dry run:
+~~~~
+certbot renew --dry-run
+~~~~
+
+True renew:
+~~~~
+certbot renew
+~~~~
+
+
 ## Postfix Configuration
 ### Backing up the configuration files
+**`Dont forget to substitute yourdomain.com in-place for yours`**
 
 ~~~~
 cp /etc/postfix/master.cf /etc/postfix/master.cf_orig &&
@@ -161,8 +311,8 @@ compatibility_level = 2
 
 # SSL/TLS
 smtpd_tls_auth_only = yes
-smtpd_tls_cert_file=/etc/letsencrypt/live/mail.mydomain.com/fullchain.pem
-smtpd_tls_key_file=/etc/letsencrypt/live/mail.mydomain.com/privkey.pem
+smtpd_tls_cert_file=/etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
+smtpd_tls_key_file=/etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtpd_tls_security_level=encrypt
@@ -271,6 +421,7 @@ vim outgoing_mail_header_filters
 ~~~~
 
 Add the following inside the file:
+**`Dont forget to substitute yourdomain.com in-place for yours`**
 ~~~~
 # Remove the first line of the Received: header. Note that we cannot fully remove the Received: header
 # because OpenDKIM requires that a header be present when signing outbound mail. The first line is
@@ -309,6 +460,7 @@ cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf_orig
 ~~~~
 
 ### Configuration in dovecot.conf
+**`Dont forget to substitute yourdomain.com in-place for yours`**
 
 ~~~~
 vim /etc/dovecot/dovecot.conf
@@ -370,8 +522,8 @@ user = postfix
 }
 }
 ssl=required
-ssl_cert = </etc/ssl/certs/mail.yourdomain.pem
-ssl_key = </etc/ssl/private/mail.yourdomain.key
+ssl_cert = </etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
+ssl_key = </etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 ssl_protocols = !SSLv2 !SSLv3 !TLSv1
 ssl_cipher_list = ECDHE-RSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ALL:!LOW:!SSLv2:!EXP:!aNULL
 ssl_prefer_server_ciphers = yes
@@ -436,113 +588,6 @@ disable_plaintext_auth = yes
 service dovecot restart
 ~~~~
 
-## Setting up DKIM (Domain Keys Identified Mail)
-
-### Creating the directory and files
-
-~~~~
-mkdir /etc/opendkim
-~~~~
-
-~~~~
-vim /etc/opendkim/KeyTable
-~~~~
-
-We enter the following line (all in the first line):
-~~~~
-default._domainkey.mail.yourdomain.com mail.yourdomain.com:default:/etc/opendkim/default.private
-~~~~
-
-~~~~
-vim /etc/opendkim/SigningTable
-~~~~
-
-We enter the following line:
-~~~~
-*@yourdomain.com default._domainkey.mail.yourdomain.com
-~~~~
-
-### Generating the key pair
-~~~~
-opendkim-genkey -b 2048 -s default -d mail.yourdomain.com -D /etc/opendkim
-~~~~
-
-### Changing ownership of the private key file
-
-~~~~
-chown opendkim:opendkim /etc/opendkim/default.private
-~~~~
-
-### Configuration in opendkim
-
-~~~~
-vim /etc/default/opendkim
-~~~~
-
-### We add the line below to the configuration
-~~~~
-SOCKET="inet:8891@localhost"
-~~~~
-
-### Configuration in opendkim.conf
-
-~~~~
-vim /etc/opendkim.conf
-~~~~
-
-### We fill the file with our configuration
-~~~~
-Syslog yes
-SyslogSuccess Yes
-LogWhy yes
-
-UMask 002
-
-KeyTable refile:/etc/opendkim/KeyTable
-SigningTable refile:/etc/opendkim/SigningTable
-Selector default
-X-Header no
-SignatureAlgorithm rsa-sha256
-
-Canonicalization relaxed/simple
-Mode sv
-AutoRestart Yes
-AutoRestartRate 5/1h
-InternalHosts 127.0.0.1, localhost, yourdomain.com, mail.yourdomain.com
-
-OversignHeaders From
-~~~~
-
-### Setting the DKIM DNS record
-
-~~~~
-cat /etc/opendkim/default.txt
-~~~~
-
-This is our public key which will be used to verify the signature in our emails.
-
-~~~~
-default._domainkey IN TXT "v=DKIM1; k=rsa;
-p=MIGfHL0GCSqGSIb3DQESYJFOA4GNADCBiQKBgQDS+vPyWRs7w32xomf2oZIexmS2TuQAXKPiQ3AXn4j25NOReXdgKxIqAwl3O7dQtgluWw+TH85Mrbmx5UgwaaLenj9cfe2IRvx7hvkj7+6i0XQqrWqZlMw+QAJxAGhfa/GVTYa+/7PFWfXLoqoBW5arE+wO20O2uw5Ik62HjkKZbQIDAQAB" ; ----- DKIM key default for mail.yourdomain.com
-~~~~
-
-#### Now we add a new TXT record:
-
-As 'name' we put (there is a 'dot' at the end):
-
-~~~~
-default._domainkey.mail.yourdomain.com.
-~~~~
-
-As 'text' we add (use your public key from /etc/opendkim/default.txt):
-~~~~
-"v=DKIM1; k=rsa; p=MIGfHL0GCSqGSIb3DQESYJFOA4GNADCBiQKBgQDS+vPyWRs7w32xomf2oZIexmS2TuQAXKPiQ3AXn4j25NOReXdgKxIqAwl3O7dQtgluWw+TH85Mrbmx5UgwaaLenj9cfe2IRvx7hvkj7+6i0XQqrWqZlMw+QAJxAGhfa/GVTYa+/7PFWfXLoqoBW5arE+wO20O2uw5Ik62HjkKZbQIDAQAB"
-~~~~
-
-![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DKIM_DNS_record_edit.png?raw=true)
-
-
-It will take a while to propagate the new configuration throughout the entire internet.
 
 ## Starting postfix and restarting opendkim
 
@@ -637,68 +682,6 @@ selector: default
 
 Some more testing can be done [here](https://www.wormly.com/test_smtp_server), or [here](http://www.emailsecuritygrader.com/), or [here](https://www.mail-tester.com/).
 
-  
-### Getting a certificate from Let's Encrypt, moving away from self signed ones.
-There's nothing wrong with using a self signed certificate, other than having to have Thunderbird add exceptions for them at the beginning. Thunderbird's ability to read your server stats is exceptional, I think other mail clients would break trying to get your server details in order.<br>
-With that in mind, having a more accepted certificate would reduce the need for Exceptions and maybe allow other mail clients to function properly. The catch? You'll need to renew every ninety days, it can be done automatically too(I'll leave the magic for that up to you to find), the self signed lasts up-to one year per this page.<br>
-
-Installing Let's Encrypt Certbot:
-~~~~
-  add-apt-repository ppa:certbot/certbot
-~~~~
-~~~~
-  apt-get update
-~~~~
-~~~~
-  apt-get install certbot
-~~~~
-This option won't need a webserver running, certbot will handle it, port 80 should be open incase you're using a firewall.
-When asked, enter a valid email address that **`certbot`**  can remind you to renew before ninety day period is over.
-~~~~
-  certbot certonly --standalone --preferred-challenges http -d mail.yourdomain.com
-~~~~
-
-~~~~
-  - Congratulations! Your certificate and chain have been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
-   Your key file has been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-   Your cert will expire on 2019-05-01. To obtain a new or tweaked
-   version of this certificate in the future, simply run certbot
-   again. To non-interactively renew *all* of your certificates, run
-   "certbot renew"
-~~~~
-Don't forget to apply those settings to your **` main.cf `** here:
-  ~~~~
-  smtpd_tls_cert_file=/etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
-  smtpd_tls_key_file=/etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-  ~~~~
-And your **` dovecot.conf `** file as well
-  ~~~~
-  ssl_cert = </etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
-  ssl_key = </etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
-  ~~~~
-Restart both services
-~~~~
-service postfix restart
-service dovecot restart
-~~~~
-
-
-Don't forget that your certificate is only valid for ninety days, you will need to renew it. Manually renew before expiration date.
-Dry run:
-~~~~
-certbot renew --dry-run
-~~~~
-
-True renew:
-~~~~
-certbot renew
-~~~~
-
-Restart both services
-~~~~
-service postfix restart
-service dovecot restart
-~~~~
 
 
 ### Postgrey in action
