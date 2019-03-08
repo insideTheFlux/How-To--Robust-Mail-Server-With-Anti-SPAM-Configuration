@@ -471,7 +471,7 @@ We empty the file and add our configuration.
 ~~~~
 disable_plaintext_auth = no
 mail_privileged_group = mail
-mail_location = mbox:~/mail:INBOX=/var/mail/%u
+mail_location = maildir:~/Maildir
 userdb {
 driver = passwd
 }
