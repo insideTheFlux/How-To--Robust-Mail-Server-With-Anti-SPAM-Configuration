@@ -86,6 +86,7 @@ We create a new TXT record named **`_dmarc.yourdomain.com.`**
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/PTR_record_edit.png?raw=true)
 
 ### Our configuration should look similar to this
+Do not worry about the DKIM/TXT/DomainKey record, we'll add it later down the page.
 ![](https://github.com/insideTheFlux/Mail-Server-With-Extras/blob/master/edited/DNSRecords_FullSetup_edit.png?raw=true)
 
 
