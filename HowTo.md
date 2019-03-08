@@ -612,7 +612,7 @@ We can observe the ongoing transactions and spot possible errors by monitoring o
 tail -f /var/log/syslog
 ~~~~
 
-## You might notice another error in syslog, again:
+## You might notice another error in syslog, again: Ubuntu 18.04
 
 This time it happens during sending emails, nothing gets sent. Here's an image:
 
