@@ -323,6 +323,7 @@ mydestination = $myhostname, mydomain.com, mail.mydomain.com, localhost.mydomain
 relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
+home_mailbox = Maildir/
 recipient_delimiter = +
 inet_interfaces = all
 maximal_queue_lifetime=2d
