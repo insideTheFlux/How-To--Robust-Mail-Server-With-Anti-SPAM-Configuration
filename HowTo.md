@@ -318,8 +318,8 @@ smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
 smtpd_tls_security_level=encrypt
 smtp_tls_security_level=encrypt
 
-myhostname = mail.mydomain.com
-mydestination = $myhostname, mydomain.com, mail.mydomain.com, localhost.mydomain.com, localhost
+myhostname = mail.yourdomain.com
+mydestination = $myhostname, yourdomain.com, mail.yourdomain.com, localhost.yourdomain.com, localhost
 relayhost =
 mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
