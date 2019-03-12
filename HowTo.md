@@ -390,6 +390,12 @@ smtpd_milters = inet:localhost:8891
 non_smtpd_milters = inet:localhost:8891
 ~~~~
 
+#### For improved security, let's create dh2048.pem file
+While in **`/etc/postfix`**
+~~~~
+sudo openssl dhparam -out dh2048.tmp 2048 && sudo mv dh2048.tmp dh2048.pem
+~~~~
+
 ### Configuration in master.cf
 
 ~~~~
