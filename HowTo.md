@@ -33,7 +33,7 @@ apt-get update && apt-get upgrade
 
 #### Installing
 ~~~~
-apt-get install postfix postfix-policyd-spf-perl postgrey dovecot-core dovecot-imapd opendkim opendkim-tools && postfix stop
+apt-get install postfix postfix-policyd-spf-perl postfix-pcre postgrey dovecot-core dovecot-imapd opendkim opendkim-tools && postfix stop
 ~~~~
 
 Hit ‘No’ if asked to create a SSL certificate. Choose `Internet Site` and press 'ok' 2 times when asked by the postfix installer.
@@ -412,12 +412,19 @@ smtp inet n - y - - smtpd
 We uncomment the following:
 **`Be mindful of the spacing on the second line`**
 ~~~~
-submission inet n - - - - smtpd
-  -o syslog_name=postfix/submission
-  -o smtpd_tls_security_level=encrypt
+submission inet n       -       -       -       -       smtpd
   -o smtpd_sasl_auth_enable=yes
+  -o syslog_name=postfix/submission
   -o smtpd_milters=inet:127.0.0.1:8891
+  -o smtpd_tls_security_level=encrypt
+  -o smtpd_tls_ciphers=strong
+  -o smtpd_tls_exclude_ciphers=aNULL,DES,3DES,MD5,DES+MD5,RC4
+  -o smtpd_tls_mandatory_protocols=!SSLv2,!SSLv3,!TLSv1
   -o smtpd_client_restrictions=permit_sasl_authenticated,reject
+  -o cleanup_service_name=authclean
+authclean unix  n       -       -       -       0       cleanup
+          -o header_checks=pcre:/etc/postfix/outgoing_mail_header_filters
+          -o nested_header_checks=
 ~~~~
 
 and add these 2 lines below, at the end of the file 
