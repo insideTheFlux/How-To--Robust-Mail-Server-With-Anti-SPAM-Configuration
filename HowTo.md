@@ -309,14 +309,31 @@ readme_directory = no
 # fresh installs.
 compatibility_level = 2
 
-# SSL/TLS
+# Enable TLS on these and all other connections (i.e. ports 25 *and* 587) and
+# require TLS before a user is allowed to authenticate. This also makes
+# opportunistic TLS available on *incoming* mail.
 smtpd_tls_auth_only = yes
 smtpd_tls_cert_file=/etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
 smtpd_tls_key_file=/etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_security_level=may
+smtpd_sasl_type=dovecot
+smtpd_sasl_path=private/auth
+smtpd_tls_dh1024_param_file=/etc/postfix/dh2048.pem
+smtpd_tls_protocols=!SSLv2,!SSLv3,!TLSv1
+smtpd_tls_ciphers=high
+smtpd_tls_exclude_ciphers=aNULL,RC4
+smtpd_tls_received_header=yes
+
+
+smtp_tls_protocols= !SSLv2, !SSLv3, !TLSv1
+smtp_tls_mandatory_protocols= !SSLv2, !SSLv3, !TLSv1
+smtp_tls_ciphers=high
+smtp_tls_exclude_ciphers=aNULL,RC4
+smtp_tls_security_level=may
+smtp_tls_loglevel=2
 smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
-smtpd_tls_security_level=encrypt
-smtp_tls_security_level=encrypt
+
 
 myhostname = mail.yourdomain.com
 mydestination = $myhostname, yourdomain.com, mail.yourdomain.com, localhost.yourdomain.com, localhost
@@ -326,7 +343,7 @@ mailbox_size_limit = 0
 home_mailbox = Maildir/
 recipient_delimiter = +
 inet_interfaces = all
-maximal_queue_lifetime=2d
+maximal_queue_lifetime=5d
 bounce_queue_lifetime=1d
 syslog_name=postfix/submission
 
@@ -335,16 +352,9 @@ alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
 local_recipient_maps = proxy:unix:passwd.byname $alias_maps
 
-smtpd_sasl_type=dovecot
-smtpd_sasl_path=private/auth
-smtpd_sasl_auth_enable=no
-
 
 policy-spf_time_limit = 3600s
 smtpd_helo_required = yes
-
-header_checks = regexp:/etc/postfix/outgoing_mail_header_filters
-mime_header_checks = regexp:/etc/postfix/outgoing_mail_header_filters
 
 smtpd_recipient_restrictions =
  permit_mynetworks
