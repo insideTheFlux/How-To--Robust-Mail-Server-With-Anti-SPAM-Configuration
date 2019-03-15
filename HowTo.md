@@ -253,7 +253,7 @@ When asked, enter a valid email address that **`certbot`**  can remind you to re
 ~~~~
   certbot certonly --standalone --preferred-challenges http -d mail.yourdomain.com
 ~~~~
-
+When it asks for an email, use **`postmaster@yourdomain.com`** and say no to sharing with the EFF for now.
 ~~~~
   - Congratulations! Your certificate and chain have been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/fullchain.pem
    Your key file has been saved at:   /etc/letsencrypt/live/mail.yourdomain.com/privkey.pem
